@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -27,8 +28,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
-            // Sesuai petunjuk langkah ke-5 di README, bagian signingConfig debug kustom dihapus
-            // agar otomatis menggunakan konfigurasi debug bawaan sistem.
+            // Sengaja dikosongkan agar otomatis menggunakan debug config bawaan sistem
         }
     }
 
@@ -50,7 +50,7 @@ android {
 }
 
 dependencies {
-    // Pustaka Utama Jetpack Compose & UI
+    // Pustaka Utama Jetpack Compose untuk mengenali TextStyle, sp, FontFamily
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity.compose)
 
-    // Pustaka Pendukung Pengujian (Testing)
+    // Pustaka Pengujian Standar
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
