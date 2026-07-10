@@ -18,31 +18,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Auto Locate Android Project and Setup Wrapper
+    - name: Run Build with Gradle
       run: |
-        # Mencari folder mana saja yang berisi file build.gradle atau build.gradle.kts
-        GRADLE_FILE=$(find . -name "build.gradle" -o -name "build.gradle.kts" | grep -v "node_modules" | head -n 1)
-        if [ -z "$GRADLE_FILE" ]; then
-          echo "Error: File build.gradle tidak ditemukan sama sekali di repositori kamu!"
-          exit 1
-        fi
-        
-        PROJECT_DIR=$(dirname "$GRADLE_FILE")
-        # Mengubah path relatif menjadi absolut
-        ABS_PROJECT_DIR=$(cd "$PROJECT_DIR" && pwd)
-        echo "Menemukan lokasi project Android asli di: $ABS_PROJECT_DIR"
-        
-        # Masuk ke folder tersebut untuk membuat wrapper mandiri
-        cd "$ABS_PROJECT_DIR"
         gradle wrapper
         chmod +x gradlew
-        
-        # Menyimpan path folder absolut ke dalam environment variabel GitHub Actions
-        echo "TARGET_ANDROID_DIR=$ABS_PROJECT_DIR" >> $GITHUB_ENV
-
-    - name: Build with Gradle
-      run: |
-        cd "${{ env.TARGET_ANDROID_DIR }}"
         ./gradlew assembleDebug
 
     - name: Upload APK
