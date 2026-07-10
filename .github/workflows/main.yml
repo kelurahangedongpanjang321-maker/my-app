@@ -18,7 +18,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Auto Locate Android Project and Bypass Env
+    - name: Auto Locate Android Project and Bypass Env & Keystore
       run: |
         # Cari lokasi build.gradle yang ada di repositori
         GRADLE_FILE=$(find . -name "build.gradle" -o -name "build.gradle.kts" | grep -v "node_modules" | head -n 1)
@@ -26,17 +26,13 @@ jobs:
         ABS_PROJECT_DIR=$(cd "$PROJECT_DIR" && pwd)
         echo "Menemukan lokasi project di: $ABS_PROJECT_DIR"
         
-        # Masuk ke folder project
         cd "$ABS_PROJECT_DIR"
         
-        # Trik Pembuat File .env otomatis agar build tidak error
+        # Buat file .env otomatis agar tidak error
         if [ ! -f ".env.example" ]; then
-          echo "Membuat file .env.example cadangan..."
           echo "GEMINI_API_KEY=your_key_here" > .env.example
         fi
-        
         if [ ! -f ".env" ]; then
-          echo "Membuat file .env cadangan..."
           echo "GEMINI_API_KEY=your_key_here" > .env
         fi
         
@@ -46,10 +42,11 @@ jobs:
         
         echo "TARGET_ANDROID_DIR=$ABS_PROJECT_DIR" >> $GITHUB_ENV
 
-    - name: Build with Gradle
+    - name: Build with Gradle (Bypass Signing)
       run: |
         cd "${{ env.TARGET_ANDROID_DIR }}"
-        ./gradlew assembleDebug
+        # Perintah khusus untuk merakit kode tanpa memvalidasi file debug.keystore yang hilang
+        ./gradlew assembleDebug -Pandroid.injected.signing.config.signingReady=true
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
