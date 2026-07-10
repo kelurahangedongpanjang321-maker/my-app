@@ -18,15 +18,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./SIMPEL/gradlew
+    - name: Find Gradlew and Grant Permission
+      run: |
+        GRADLEW_PATH=$(find . -name gradlew)
+        echo "Found gradlew at: $GRADLEW_PATH"
+        chmod +x $GRADLEW_PATH
+        echo "DIR_PATH=$(dirname $GRADLEW_PATH)" >> $GITHUB_ENV
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug
-      working-directory: ./SIMPEL
+      working-directory: ${{ env.DIR_PATH }}
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: my-app-apk
-        path: SIMPEL/app/build/outputs/apk/debug/*.apk
+        path: "**/build/outputs/apk/debug/*.apk"
