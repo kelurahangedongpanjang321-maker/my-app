@@ -25,7 +25,7 @@ android {
         }
         
         debug {
-            // Menggunakan pengaturan debug bawaan sistem
+            // Sengaja dikosongkan agar otomatis menggunakan debug config bawaan sistem
         }
     }
 
@@ -40,20 +40,18 @@ android {
     }
 }
 
-// 🌟 KITA MASUKKAN KEMBALI LIBRARY COMPOSE YANG HILANG DI SINI:
+// 🌟 BAGIAN PUSTAKA UTAMA YANG HARUS ADA AGAR 'TYPE.KT' TIDAK ERROR:
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.activity.compose)
     
+    // Pustaka pengujian dasar
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 }
