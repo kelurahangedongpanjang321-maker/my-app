@@ -18,18 +18,24 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Initialize Gradle Wrapper if missing
+    - name: Locate Project and Setup Wrapper
       run: |
-        PROJECT_DIR=$(find . -name "build.gradle*" -exec dirname {} \;)
-        echo "Project directory found at: $PROJECT_DIR"
-        cd $PROJECT_DIR
+        # Cari lokasi build.gradle yang ada di dalam workspace repositori GitHub
+        GRADLE_FILE=$(find $GITHUB_WORKSPACE -name "build.gradle" -o -name "build.gradle.kts" | head -n 1)
+        PROJECT_DIR=$(dirname "$GRADLE_FILE")
+        echo "Menemukan folder project di: $PROJECT_DIR"
+        
+        # Pindah ke folder tersebut dan buat wrapper
+        cd "$PROJECT_DIR"
         gradle wrapper
         chmod +x gradlew
-        echo "FINAL_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+        
+        # Simpan lokasi folder agar bisa dipakai di step berikutnya
+        echo "FINAL_PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
     - name: Build with Gradle
       run: |
-        cd ${{ env.FINAL_DIR }}
+        cd "${{ env.FINAL_PROJECT_DIR }}"
         ./gradlew assembleDebug
 
     - name: Upload APK
