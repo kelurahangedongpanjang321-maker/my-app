@@ -17,16 +17,16 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x ./SIMPEL/gradlew
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug
+      working-directory: ./SIMPEL
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: my-app-apk
-        path: app/build/outputs/apk/debug/*.apk
+        path: SIMPEL/app/build/outputs/apk/debug/*.apk
