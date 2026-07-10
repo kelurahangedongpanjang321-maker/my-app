@@ -18,10 +18,37 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Run Build with Gradle
+    - name: Auto Locate Android Project and Bypass Env
       run: |
+        # Cari lokasi build.gradle yang ada di repositori
+        GRADLE_FILE=$(find . -name "build.gradle" -o -name "build.gradle.kts" | grep -v "node_modules" | head -n 1)
+        PROJECT_DIR=$(dirname "$GRADLE_FILE")
+        ABS_PROJECT_DIR=$(cd "$PROJECT_DIR" && pwd)
+        echo "Menemukan lokasi project di: $ABS_PROJECT_DIR"
+        
+        # Masuk ke folder project
+        cd "$ABS_PROJECT_DIR"
+        
+        # Trik Pembuat File .env otomatis agar build tidak error
+        if [ ! -f ".env.example" ]; then
+          echo "Membuat file .env.example cadangan..."
+          echo "GEMINI_API_KEY=your_key_here" > .env.example
+        fi
+        
+        if [ ! -f ".env" ]; then
+          echo "Membuat file .env cadangan..."
+          echo "GEMINI_API_KEY=your_key_here" > .env
+        fi
+        
+        # Setup Wrapper
         gradle wrapper
         chmod +x gradlew
+        
+        echo "TARGET_ANDROID_DIR=$ABS_PROJECT_DIR" >> $GITHUB_ENV
+
+    - name: Build with Gradle
+      run: |
+        cd "${{ env.TARGET_ANDROID_DIR }}"
         ./gradlew assembleDebug
 
     - name: Upload APK
