@@ -15,6 +15,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -23,9 +26,9 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-        
         debug {
-            // Sengaja dikosongkan agar otomatis menggunakan debug config bawaan sistem
+            // Sesuai petunjuk langkah ke-5 di README, bagian signingConfig debug kustom dihapus
+            // agar otomatis menggunakan konfigurasi debug bawaan sistem.
         }
     }
 
@@ -38,20 +41,29 @@ android {
         compose = true
         buildConfig = true
     }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
-// 🌟 BAGIAN PUSTAKA UTAMA YANG HARUS ADA AGAR 'TYPE.KT' TIDAK ERROR:
 dependencies {
+    // Pustaka Utama Jetpack Compose & UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    
-    // Pustaka pengujian dasar
+    implementation(libs.androidx.activity.compose)
+
+    // Pustaka Pendukung Pengujian (Testing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
